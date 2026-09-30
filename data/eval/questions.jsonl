@@ -1,9 +1,9 @@
-{"query": "Is AA184 delayed and what should I do?", "category": "flight_delay", "expected_terms": ["AA184", "55 minutes", "Sources:"]}
-{"query": "My EK232 flight was cancelled. What refund, voucher, compensation, and alternate flight options do I have?", "category": "cancellation_recovery", "expected_terms": ["Recovery plan", "refund", "Cheapest sample option", "$1039"]}
-{"query": "I am traveling from America to India and have an 8 hour layover in Dubai. What can I do?", "category": "long_layover", "expected_terms": ["Dubai layover", "Priority Pass", "sleep", "Sources:"]}
-{"query": "What happens if Amtrak train 391 is late?", "category": "train_delay", "expected_terms": ["391", "42 minutes", "Sources:"]}
-{"query": "Is ZZ999 delayed?", "category": "refusal", "expected_terms": ["could not find", "will not invent"]}
-{"query": "What are my options if my flight is cancelled?", "category": "policy_retrieval", "expected_terms": ["refund", "Sources:"]}
-{"query": "Plan a 3 day trip to Dubai", "category": "trip_planning", "expected_terms": ["Dubai plan", "Old Dubai", "Burj Khalifa", "Sources:"]}
-{"query": "Find cheap flights from Washington DC to Hyderabad", "category": "flight_deals", "expected_terms": ["Cheapest sample", "$982", "sample fares", "Sources:"]}
-{"query": "What should I check before my long-haul trip to India?", "category": "travel_readiness", "expected_terms": ["readiness check", "passport", "Sources:"]}
+{"query": "Is AA184 delayed and what should I do?", "category": "flight_delay", "gold_doc_ids": ["airline_delay_policy", "connection_risk_guide"], "expected_terms": ["AA184", "55 minutes", "Sources:"]}
+{"query": "My EK232 flight was cancelled. What refund, voucher, compensation, and alternate flight options do I have?", "category": "cancellation_recovery", "gold_doc_ids": ["cancellation_recovery_playbook", "credit_card_loyalty_benefits"], "expected_terms": ["Recovery plan", "refund", "Cheapest sample option", "$1039"]}
+{"query": "I am traveling from America to India and have an 8 hour layover in Dubai. What can I do?", "category": "long_layover", "gold_doc_ids": ["dubai_layover_guide", "credit_card_loyalty_benefits"], "expected_terms": ["Dubai layover", "Priority Pass", "sleep", "Sources:"]}
+{"query": "What happens if Amtrak train 391 is late?", "category": "train_delay", "gold_doc_ids": ["train_delay_policy"], "expected_terms": ["391", "42 minutes", "Sources:"]}
+{"query": "Is ZZ999 delayed?", "category": "refusal", "gold_doc_ids": [], "expected_terms": ["could not find", "will not invent"]}
+{"query": "What are my options if my flight is cancelled?", "category": "policy_retrieval", "gold_doc_ids": ["cancellation_recovery_playbook", "passenger_rights"], "expected_terms": ["refund", "Sources:"]}
+{"query": "Plan a 3 day trip to Dubai", "category": "trip_planning", "gold_doc_ids": ["dubai_destination_guide"], "expected_terms": ["Dubai plan", "Old Dubai", "Burj Khalifa", "Sources:"]}
+{"query": "Find cheap flights from Washington DC to Hyderabad", "category": "flight_deals", "gold_doc_ids": ["flight_deals_fare_strategy"], "expected_terms": ["Cheapest sample", "$982", "sample fares", "Sources:"]}
+{"query": "What should I check before my long-haul trip to India?", "category": "travel_readiness", "gold_doc_ids": ["travel_readiness_checklist", "india_trip_planning_guide"], "expected_terms": ["readiness check", "passport", "Sources:"]}

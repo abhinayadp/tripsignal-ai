@@ -87,3 +87,24 @@ def test_readiness_answer_includes_long_haul_checks():
     assert "readiness check" in answer.lower()
     assert "passport" in answer.lower()
     assert "Sources:" in answer
+
+
+def test_answer_trace_includes_agent_tools_and_verification():
+    assistant = TravelDisruptionAssistant()
+    result = assistant.answer_with_trace("My EK232 flight was cancelled. What should I do?")
+    assert result["trace"]["intent"] == "cancellation_recovery"
+    assert "alternate_flights_tool" in result["trace"]["tools_used"]
+    assert result["trace"]["verification"]["supported"] is True
+    assert result["trace"]["retrieved_docs"]
+
+
+def test_verifier_flags_unsupported_price():
+    assistant = TravelDisruptionAssistant()
+    verification = assistant.verifier.verify("Take this flight for $7777. Sources: Sample.", allowed_prices={1039})
+    assert verification["supported"] is False
+    assert verification["prices_found"] == [7777]
+
+
+def test_llm_adapter_defaults_to_rule_based_without_key():
+    assistant = TravelDisruptionAssistant()
+    assert assistant.llm.name in {"rule-based", "openai-compatible"}

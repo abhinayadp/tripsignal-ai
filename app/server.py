@@ -41,8 +41,8 @@ class Handler(BaseHTTPRequestHandler):
             return
         length = int(self.headers.get("Content-Length", "0"))
         payload = json.loads(self.rfile.read(length) or b"{}")
-        answer = assistant.answer(payload.get("query", ""))
-        self._send(200, json.dumps({"answer": answer}).encode(), "application/json")
+        result = assistant.answer_with_trace(payload.get("query", ""))
+        self._send(200, json.dumps(result).encode(), "application/json")
 
 
 def main() -> None:

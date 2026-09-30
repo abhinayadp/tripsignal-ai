@@ -19,6 +19,9 @@ async function ask(query) {
   });
   const data = await res.json();
   addMessage(data.answer, 'bot');
+  if (data.trace) {
+    addMessage(`Trace: intent=${data.trace.intent}; tools=${data.trace.tools_used.join(', ')}; verified=${data.trace.verification.supported}`, 'bot');
+  }
 }
 
 form.addEventListener('submit', async (event) => {

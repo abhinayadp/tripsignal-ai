@@ -2,8 +2,10 @@ import json
 import re
 from pathlib import Path
 
+from .llm import get_llm_client
 from .providers import SampleTravelDataProvider
 from .retriever import HybridRetriever
+from .verifier import AnswerVerifier
 
 BASE_DIR = Path(__file__).resolve().parents[1]
 KB_DIR = BASE_DIR / "data" / "knowledge_base"
@@ -37,6 +39,10 @@ class TravelDisruptionAssistant:
         self.trains = self.provider.trains
         self.alternates = self.provider.alternates
         self.deals = self.provider.deals
+        self.verifier = AnswerVerifier()
+        self.llm = get_llm_client()
+        self._last_trace: dict = {}
+        self._last_evidence: list[dict] = []
 
     def _flight_answer(self, flight_number: str, query: str) -> str | None:
         record = self.flights.get(flight_number)
@@ -93,7 +99,69 @@ class TravelDisruptionAssistant:
 
     def _citations(self, query: str, top_k: int = 3) -> str:
         evidence = self.index.search(query, top_k=top_k)
+        self._last_evidence = evidence
         return ", ".join(doc["title"] for doc in evidence) or "Cancellation Recovery Playbook"
+
+    def _all_prices(self) -> set[int]:
+        prices = set()
+        for route in self.alternates.values():
+            for option in route.get("options", []):
+                prices.add(int(option["price_usd"]))
+        for deal_set in self.deals.values():
+            for option in deal_set.get("options", []):
+                prices.add(int(option["price_usd"]))
+        return prices
+
+    @staticmethod
+    def _intent_for_query(query: str) -> str:
+        lower = query.lower()
+        if "cancel" in lower:
+            return "cancellation_recovery"
+        if "dubai" in lower and any(term in lower for term in ["layover", "wait", "8 hour", "eight hour"]):
+            return "long_layover"
+        if any(term in lower for term in ["cheap", "deal", "fare", "offers"]):
+            return "flight_deals"
+        if any(term in lower for term in ["checklist", "packing", "prepare", "what should i check"]):
+            return "travel_readiness"
+        if any(term in lower for term in ["itinerary", "plan", "trip to", "visit", "days in"]):
+            return "trip_planning"
+        if any(term in lower for term in ["train", "amtrak", "rail"]):
+            return "train_status"
+        if re.search(r"\b[A-Z]{2}\d{2,4}\b", query.upper()):
+            return "flight_status"
+        return "policy_retrieval"
+
+    @staticmethod
+    def _tools_for_intent(intent: str) -> list[str]:
+        mapping = {
+            "flight_status": ["flight_status_tool", "policy_rag_tool", "verifier"],
+            "cancellation_recovery": ["flight_status_tool", "alternate_flights_tool", "policy_rag_tool", "benefits_checker", "verifier"],
+            "long_layover": ["airport_guide_rag_tool", "benefits_checker", "verifier"],
+            "flight_deals": ["flight_offers_tool", "fare_strategy_rag_tool", "verifier"],
+            "trip_planning": ["destination_rag_tool", "itinerary_planner", "verifier"],
+            "travel_readiness": ["readiness_rag_tool", "verifier"],
+            "train_status": ["train_status_tool", "policy_rag_tool", "verifier"],
+            "policy_retrieval": ["policy_rag_tool", "verifier"],
+        }
+        return mapping.get(intent, ["policy_rag_tool", "verifier"])
+
+    def answer_with_trace(self, query: str) -> dict:
+        answer_text = self.answer(query)
+        intent = self._intent_for_query(query)
+        retrieved_docs = self.index.search(query, top_k=3)
+        verification = self.verifier.verify(answer_text, self._all_prices())
+        trace = {
+            "intent": intent,
+            "tools_used": self._tools_for_intent(intent),
+            "llm_composer": getattr(self.llm, "name", "unknown"),
+            "retrieved_docs": [
+                {"id": doc["id"], "title": doc["title"], "rerank_score": doc.get("rerank_score")}
+                for doc in retrieved_docs
+            ],
+            "verification": verification,
+        }
+        self._last_trace = trace
+        return {"answer": answer_text, "trace": trace}
 
     def _cancellation_answer(self, flight_number: str, query: str) -> str:
         record = self.flights.get(flight_number)

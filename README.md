@@ -17,7 +17,9 @@ Most travel chatbots either answer trivia or only help after something goes wron
 - Handles cancellation recovery: refund path, rebooking choice, vouchers, hotel or meal support, compensation caution, and alternate flights with sample fares.
 - Answers train status questions using structured rail records.
 - Builds long-layover plans for international itineraries, including lounge access, sleep options, credit-card benefit checks, and return-to-gate buffers.
-- Retrieves policy guidance from a local knowledge base using hybrid BM25 plus TF-IDF ranking fused with Reciprocal Rank Fusion.
+- Retrieves policy guidance from a local knowledge base using hybrid BM25, TF-IDF, and dense-vector retrieval fused with Reciprocal Rank Fusion, followed by feature reranking.
+- Exposes an agent trace for every answer: detected intent, tools used, retrieved documents, LLM composer mode, and verifier result.
+- Includes a Self-RAG-lite verifier that checks citation presence and flags prices that are not present in provider inventory.
 - Combines live-style status data with RAG so policy answers are grounded in documents.
 - Produces action-oriented responses: status, risk, likely impact, recommended next step, and source citations.
 - Refuses to invent status when a flight or train is not found.
@@ -45,19 +47,20 @@ TripSignal separates facts into three layers: curated policy documents for RAG, 
 User query
   -> intent and entity extraction (flight number, train number, route, disruption type)
   -> provider adapters for structured status and alternate flight inventory
-  -> hybrid BM25 + TF-IDF retrieval over policy and operations documents
-  -> response composer combining status + retrieved policy evidence
+  -> hybrid BM25 + TF-IDF + dense retrieval over policy and operations documents
+  -> feature reranking, agent tool routing, cited response composition, and verifier checks
   -> cited, action-oriented answer
 ```
 
 ### Production upgrade path
 
 1. Replace sample status JSON with live APIs for flights and trains.
-2. Swap BM25-only retrieval for hybrid BM25 + dense embeddings + reranking.
-3. Add Corrective RAG: grade retrieved evidence, rewrite weak queries, and refuse when evidence is insufficient.
-4. Add user itinerary memory: home airport, loyalty status, connection airports, notification preferences.
-5. Add proactive alerts through email, SMS, or WhatsApp.
-6. Add evaluation: retrieval recall, citation precision, delay-answer accuracy, and refusal correctness.
+2. Swap the hashing dense baseline for neural embeddings such as BGE-M3 or Qwen3-Embedding in Qdrant.
+3. Swap the feature reranker for a cross-encoder such as bge-reranker-v2-m3, Qwen3-Reranker, Cohere Rerank, or Voyage Rerank.
+4. Strengthen Corrective RAG: grade retrieved evidence, rewrite weak queries, retry retrieval, and refuse when evidence is insufficient.
+5. Add user itinerary memory: home airport, loyalty status, connection airports, notification preferences.
+6. Add proactive alerts through email, SMS, or WhatsApp.
+7. Expand evaluation: retrieval recall, MRR, citation precision, unsupported-claim rate, delay-answer accuracy, and refusal correctness.
 
 ### Run the CLI demo
 
