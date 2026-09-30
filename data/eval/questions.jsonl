@@ -7,3 +7,47 @@
 {"query": "Plan a 3 day trip to Dubai", "category": "trip_planning", "gold_doc_ids": ["dubai_destination_guide"], "expected_terms": ["Dubai plan", "Old Dubai", "Burj Khalifa", "Sources:"]}
 {"query": "Find cheap flights from Washington DC to Hyderabad", "category": "flight_deals", "gold_doc_ids": ["flight_deals_fare_strategy"], "expected_terms": ["Cheapest sample", "$982", "sample fares", "Sources:"]}
 {"query": "What should I check before my long-haul trip to India?", "category": "travel_readiness", "gold_doc_ids": ["travel_readiness_checklist", "india_trip_planning_guide"], "expected_terms": ["readiness check", "passport", "Sources:"]}
+{"query": "Is UA920 delayed? Will I miss my connection?", "category": "connection_risk", "gold_doc_ids": ["connection_risk_guide"], "expected_terms": ["UA920", "105 minutes", "Connection risk: High", "Sources:"]}
+{"query": "What is the status of DL1105?", "category": "exact_entity", "gold_doc_ids": [], "expected_terms": ["DL1105", "on time", "B18", "Sources:"]}
+{"query": "Tell me about EK516", "category": "exact_entity", "gold_doc_ids": [], "expected_terms": ["EK516", "on time", "Sources:"]}
+{"query": "Is AA184 on time or delayed?", "category": "flight_delay", "gold_doc_ids": ["connection_risk_guide", "airline_delay_policy"], "expected_terms": ["AA184", "55 minutes", "Sources:"]}
+{"query": "Is Amtrak train 59 on time?", "category": "train_status", "gold_doc_ids": ["train_delay_policy"], "expected_terms": ["59", "City of New Orleans", "Sources:"]}
+{"query": "What about NEC174 train?", "category": "train_status", "gold_doc_ids": ["train_delay_policy"], "expected_terms": ["NEC174", "48 minutes", "Sources:"]}
+{"query": "Is Amtrak train 777 late?", "category": "refusal", "gold_doc_ids": [], "expected_terms": ["could not find", "will not invent"]}
+{"query": "My flight got scrapped, what can I get back?", "category": "paraphrase", "gold_doc_ids": ["cancellation_recovery_playbook"], "expected_terms": ["entitled to request", "alternate flights", "Sources:"]}
+{"query": "Can I get my money back instead of a voucher?", "category": "paraphrase", "gold_doc_ids": ["cancellation_recovery_playbook"], "expected_terms": ["refund", "voucher", "Sources:"]}
+{"query": "Put me on another plane, mine was cancelled", "category": "paraphrase", "gold_doc_ids": ["airline_delay_policy", "cancellation_recovery_playbook"], "expected_terms": ["rebooking", "refund", "Sources:"]}
+{"query": "What am I owed when the airline cancels my trip?", "category": "compensation", "gold_doc_ids": ["cancellation_recovery_playbook", "passenger_rights"], "expected_terms": ["refund", "Sources:"]}
+{"query": "Are meal vouchers guaranteed after a cancellation?", "category": "compensation", "gold_doc_ids": ["cancellation_recovery_playbook"], "expected_terms": ["Meal vouchers", "goodwill", "Sources:"]}
+{"query": "Difference between controllable and uncontrollable delays for compensation", "category": "compensation", "gold_doc_ids": ["airline_delay_policy"], "expected_terms": ["controllable", "severe weather", "Sources:"]}
+{"query": "What should I ask for in the first 15 minutes after a cancellation?", "category": "cancellation_recovery", "gold_doc_ids": ["cancellation_recovery_playbook"], "expected_terms": ["next 15 minutes", "Sources:"]}
+{"query": "How are alternate flights ranked after a cancellation?", "category": "cancellation_recovery", "gold_doc_ids": ["cancellation_recovery_playbook"], "expected_terms": ["ranked by decision value", "Sources:"]}
+{"query": "What evidence should I keep after a cancellation?", "category": "cancellation_recovery", "gold_doc_ids": ["cancellation_recovery_playbook"], "expected_terms": ["keep evidence", "cancellation notice", "Sources:"]}
+{"query": "I am stuck overnight because the airline cancelled, will they pay for a room?", "category": "paraphrase", "gold_doc_ids": ["airline_delay_policy", "cancellation_recovery_playbook"], "expected_terms": ["hotel", "Sources:"]}
+{"query": "Is this layover too tight?", "category": "connection_risk", "gold_doc_ids": ["connection_risk_guide"], "expected_terms": ["minimum connection time", "Sources:"]}
+{"query": "Will I miss my connecting flight if my first flight is late?", "category": "connection_risk", "gold_doc_ids": ["connection_risk_guide"], "expected_terms": ["minimum connection time", "Sources:"]}
+{"query": "When is a connection considered high risk?", "category": "connection_risk", "gold_doc_ids": ["connection_risk_guide"], "expected_terms": ["High risk", "45 minutes", "Sources:"]}
+{"query": "What is the minimum connection time guidance?", "category": "connection_risk", "gold_doc_ids": ["connection_risk_guide", "airline_delay_policy"], "expected_terms": ["minimum connection time", "Sources:"]}
+{"query": "Does my credit card cover a hotel if I am stranded overnight?", "category": "card_benefits", "gold_doc_ids": ["credit_card_loyalty_benefits"], "expected_terms": ["hotel", "receipts", "Sources:"]}
+{"query": "Which card benefits help during a long wait between flights?", "category": "card_benefits", "gold_doc_ids": ["credit_card_loyalty_benefits"], "expected_terms": ["lounge access", "trip delay reimbursement", "Sources:"]}
+{"query": "Should I accept a small airline voucher before checking my card benefits?", "category": "card_benefits", "gold_doc_ids": ["credit_card_loyalty_benefits", "cancellation_recovery_playbook"], "expected_terms": ["voucher", "refund", "Sources:"]}
+{"query": "What lounge access can I use on a long layover?", "category": "card_benefits", "gold_doc_ids": ["dubai_layover_guide", "credit_card_loyalty_benefits"], "expected_terms": ["Priority Pass", "lounge", "Sources:"]}
+{"query": "Do I get a refund if the schedule changes significantly?", "category": "passenger_rights", "gold_doc_ids": ["passenger_rights"], "expected_terms": ["refund", "Department of Transportation", "Sources:"]}
+{"query": "Are hotels provided when weather causes the disruption?", "category": "compensation", "gold_doc_ids": ["passenger_rights", "airline_delay_policy"], "expected_terms": ["Weather", "Hotels and meals are less likely", "Sources:"]}
+{"query": "Train refund rules if my rail ticket is delayed", "category": "train_delay", "gold_doc_ids": ["train_delay_policy", "passenger_rights"], "expected_terms": ["refund", "fare class", "Sources:"]}
+{"query": "Can a delayed train recover time between stations?", "category": "train_delay", "gold_doc_ids": ["train_delay_policy"], "expected_terms": ["recover time", "Sources:"]}
+{"query": "I have two days in Dubai, what should I see?", "category": "trip_planning", "gold_doc_ids": ["dubai_destination_guide"], "expected_terms": ["Dubai plan", "Burj Khalifa", "Sources:"]}
+{"query": "Golden Triangle route for a first India trip", "category": "trip_planning", "gold_doc_ids": ["india_trip_planning_guide"], "expected_terms": ["Golden Triangle", "Delhi", "Sources:"]}
+{"query": "Plan a 3 day trip to India", "category": "trip_planning", "gold_doc_ids": ["india_trip_planning_guide"], "expected_terms": ["Golden Triangle", "Sources:"]}
+{"query": "Cheapest way to fly from Dallas to Chicago", "category": "flight_deals", "gold_doc_ids": ["flight_deals_fare_strategy"], "expected_terms": ["Cheapest sample", "$148", "Sources:"]}
+{"query": "What is a good fare besides the lowest price?", "category": "flight_deals", "gold_doc_ids": ["flight_deals_fare_strategy"], "expected_terms": ["total value", "Sources:"]}
+{"query": "What documents do I need before an international trip?", "category": "travel_readiness", "gold_doc_ids": ["travel_readiness_checklist"], "expected_terms": ["passport", "visa", "Sources:"]}
+{"query": "How do I prepare for jet lag on a long haul to India?", "category": "travel_readiness", "gold_doc_ids": ["india_trip_planning_guide"], "expected_terms": ["readiness check", "hydration", "Sources:"]}
+{"query": "What should I carry in my carry-on for a long flight?", "category": "travel_readiness", "gold_doc_ids": ["travel_readiness_checklist"], "expected_terms": ["carry-on", "passport", "Sources:"]}
+{"query": "Overnight layover in Dubai, should I sleep or sightsee?", "category": "long_layover", "gold_doc_ids": ["dubai_layover_guide"], "expected_terms": ["Dubai layover", "sleep", "Priority Pass", "Sources:"]}
+{"query": "Long wait in Dubai airport, what are my options?", "category": "long_layover", "gold_doc_ids": ["dubai_layover_guide"], "expected_terms": ["Dubai layover", "sleep", "Sources:"]}
+{"query": "Is QQ123 delayed?", "category": "refusal", "gold_doc_ids": [], "expected_terms": ["could not find", "will not invent"]}
+{"query": "My BA9999 flight was cancelled. What refund do I get?", "category": "refusal", "gold_doc_ids": [], "expected_terms": ["could not find", "will not invent"]}
+{"query": "What is the capital of France?", "category": "refusal", "gold_doc_ids": [], "expected_terms": ["could not find", "will not invent"]}
+{"query": "What is the best pizza topping?", "category": "refusal", "gold_doc_ids": [], "expected_terms": ["could not find", "will not invent"]}
+{"query": "Tell me the status of flight DL999", "category": "refusal", "gold_doc_ids": [], "expected_terms": ["could not find", "will not invent"]}

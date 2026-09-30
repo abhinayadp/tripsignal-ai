@@ -1,4 +1,5 @@
 from .bm25 import BM25Index
+from .corrective import grade_evidence, rewrite_query
 from .embeddings import HashingDenseIndex
 from .reranker import FeatureReranker
 from .tfidf import TFIDFIndex
@@ -49,3 +50,57 @@ class HybridRetriever:
     def search(self, query: str, top_k: int = 3) -> list[dict]:
         candidates = self._fuse(query)
         return self.reranker.rerank(query, candidates, top_k=top_k)
+
+    def search_arm(self, query: str, arm: str, top_k: int = 3) -> list[dict]:
+        """Single-arm retrieval, used for the ablation evaluation.
+
+        Arms: "bm25" (lexical), "tfidf" (weighted lexical), "dense"
+        (hashing dense baseline), and "hybrid" (RRF fusion + reranking).
+        """
+        if arm == "bm25":
+            return self.bm25.search(query, top_k=top_k)
+        if arm == "tfidf":
+            return self.tfidf.search(query, top_k=top_k)
+        if arm == "dense":
+            return self.dense.search(query, top_k=top_k)
+        if arm == "hybrid":
+            return self.search(query, top_k=top_k)
+        raise ValueError(f"Unknown retrieval arm: {arm}")
+
+    def search_with_correction(self, query: str, top_k: int = 3) -> tuple[list[dict], dict]:
+        """Corrective RAG-lite: grade evidence, rewrite once, retry.
+
+        Returns (evidence, info). ``info["passed"]`` is False when both
+        the original and the rewritten retrieval grade below the
+        evidence threshold; the caller must refuse in that case.
+        Grading always uses the original query's concepts.
+        """
+        evidence = self.search(query, top_k=top_k)
+        grade = grade_evidence(query, evidence)
+        info = {
+            "grade_score": grade["score"],
+            "grade_threshold": grade["threshold"],
+            "passed": grade["passed"],
+            "retried": False,
+            "rewritten_query": None,
+            "refused": not grade["passed"],
+        }
+        if grade["passed"]:
+            return evidence, info
+
+        rewritten = rewrite_query(query)
+        if rewritten == query:
+            return evidence, info
+
+        retry_evidence = self.search(rewritten, top_k=top_k)
+        retry_grade = grade_evidence(query, retry_evidence)
+        info.update(
+            {
+                "grade_score": retry_grade["score"],
+                "passed": retry_grade["passed"],
+                "retried": True,
+                "rewritten_query": rewritten,
+                "refused": not retry_grade["passed"],
+            }
+        )
+        return retry_evidence, info

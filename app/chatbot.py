@@ -43,6 +43,7 @@ class TravelDisruptionAssistant:
         self.llm = get_llm_client()
         self._last_trace: dict = {}
         self._last_evidence: list[dict] = []
+        self._last_correction: dict = {}
 
     def _flight_answer(self, flight_number: str, query: str) -> str | None:
         record = self.flights.get(flight_number)
@@ -123,7 +124,7 @@ class TravelDisruptionAssistant:
             return "flight_deals"
         if any(term in lower for term in ["checklist", "packing", "prepare", "what should i check"]):
             return "travel_readiness"
-        if any(term in lower for term in ["itinerary", "plan", "trip to", "visit", "days in"]):
+        if any(term in lower for term in ["itinerary", "trip to", "visit", "days in"]) or re.search(r"\bplan(ning)?\b", lower):
             return "trip_planning"
         if any(term in lower for term in ["train", "amtrak", "rail"]):
             return "train_status"
@@ -148,7 +149,10 @@ class TravelDisruptionAssistant:
     def answer_with_trace(self, query: str) -> dict:
         answer_text = self.answer(query)
         intent = self._intent_for_query(query)
-        retrieved_docs = self.index.search(query, top_k=3)
+        if self._last_correction:
+            retrieved_docs = self._last_evidence
+        else:
+            retrieved_docs = self.index.search(query, top_k=3)
         verification = self.verifier.verify(answer_text, self._all_prices())
         trace = {
             "intent": intent,
@@ -159,6 +163,14 @@ class TravelDisruptionAssistant:
                 for doc in retrieved_docs
             ],
             "verification": verification,
+            "corrective_rag": self._last_correction or {
+                "grade_score": None,
+                "grade_threshold": None,
+                "passed": None,
+                "retried": False,
+                "rewritten_query": None,
+                "refused": False,
+            },
         }
         self._last_trace = trace
         return {"answer": answer_text, "trace": trace}
@@ -256,7 +268,37 @@ class TravelDisruptionAssistant:
             f"Sources: {citations}."
         )
 
+    @staticmethod
+    def _best_snippet(doc: dict, query: str, width: int = 850) -> str:
+        """Select the most query-relevant passage instead of the doc head.
+
+        Naive head-truncation severs the one clause that matters. This
+        picks the two sentences with the strongest concept overlap
+        (in document order) up to the width budget.
+        """
+        from .corrective import _split_sentences, matched_concepts
+
+        lines = [line for line in doc["text"].splitlines() if not line.startswith("#")]
+        body = " ".join(" ".join(lines).split())
+        sentences = _split_sentences(body)
+        if len(sentences) <= 1:
+            return body[:width]
+        scored = [(matched_concepts(query, sentence), idx) for idx, sentence in enumerate(sentences)]
+        positive = sorted((entry for entry in scored if entry[0] > 0), key=lambda entry: -entry[0])[:2]
+        if not positive:
+            return body[:width]
+        chosen = sorted(idx for _, idx in positive)
+        best_idx = positive[0][1]
+        if best_idx + 1 < len(sentences) and best_idx + 1 not in chosen:
+            chosen = sorted(chosen + [best_idx + 1])
+        passage = " ".join(sentences[idx] for idx in chosen)
+        head = body[:350]
+        if passage in head or head in passage:
+            return body[:width]
+        return (passage + " " + head)[:width]
+
     def answer(self, query: str) -> str:
+        self._last_correction = {}
         query_lower = query.lower()
         flight_match = FLIGHT_RE.search(query.upper())
         if flight_match:
@@ -275,7 +317,7 @@ class TravelDisruptionAssistant:
         if any(term in query_lower for term in ["checklist", "packing", "prepare", "before my trip", "before my long-haul", "what should i check", "what should i carry"]):
             return self._readiness_answer(query)
 
-        if any(term in query_lower for term in ["itinerary", "plan", "trip to", "visit", "what to do in", "days in", "travel plan"]):
+        if any(term in query_lower for term in ["itinerary", "trip to", "visit", "what to do in", "days in", "travel plan"]) or re.search(r"\bplan(ning)?\b", query_lower):
             return self._trip_plan_answer(query)
 
         train_match = TRAIN_RE.search(query)
@@ -284,19 +326,24 @@ class TravelDisruptionAssistant:
             train_answer = self._train_answer(train_match.group(1), query)
             if train_answer:
                 return train_answer
-
-        evidence = self.index.search(query, top_k=3)
-        if not evidence:
             return (
-                "I do not have enough retrieved evidence to answer that safely. "
-                "Please add a flight number, train number, route, or disruption type."
+                f"I could not find structured status for train {train_match.group(1)}. "
+                "I will not invent a delay estimate; please verify the train number or operator."
+            )
+
+        evidence, correction = self.index.search_with_correction(query, top_k=3)
+        self._last_correction = correction
+        self._last_evidence = evidence
+        if not evidence or not correction["passed"]:
+            return (
+                "I could not find enough retrieved evidence to answer that safely. "
+                "I will not invent an answer; please add a flight number, train number, route, or disruption type."
             )
 
         snippets = []
         citations = []
         for doc in evidence:
-            body = " ".join(doc["text"].split())
-            snippets.append(body[:420])
+            snippets.append(self._best_snippet(doc, query))
             citations.append(doc["title"])
 
         return (
