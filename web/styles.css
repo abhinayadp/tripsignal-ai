@@ -1,0 +1,17 @@
+* { box-sizing: border-box; }
+body { margin: 0; font-family: Inter, system-ui, -apple-system, Segoe UI, sans-serif; background: #08111f; color: #eef4ff; }
+.shell { max-width: 1080px; margin: 0 auto; padding: 40px 20px; }
+.hero { padding: 28px 0; }
+.eyebrow { color: #7dd3fc; letter-spacing: .14em; text-transform: uppercase; font-size: 12px; font-weight: 700; }
+h1 { font-size: 56px; margin: 8px 0; }
+.sub { color: #bfd0ea; max-width: 760px; line-height: 1.6; }
+.chips { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
+.chips button, .composer button { border: 0; border-radius: 999px; padding: 11px 16px; background: #2563eb; color: white; cursor: pointer; font-weight: 700; }
+.chips button { background: #13263f; border: 1px solid #27496d; }
+.panel { background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1); border-radius: 24px; padding: 18px; backdrop-filter: blur(10px); }
+.chat { height: 430px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; padding: 6px; }
+.msg { max-width: 82%; padding: 13px 15px; border-radius: 16px; line-height: 1.55; white-space: pre-wrap; }
+.msg.bot { background: #10233c; align-self: flex-start; }
+.msg.user { background: #2563eb; align-self: flex-end; }
+.composer { display: flex; gap: 10px; margin-top: 14px; }
+.composer input { flex: 1; border-radius: 999px; border: 1px solid #27496d; background: #0b1a2e; color: white; padding: 13px 16px; }

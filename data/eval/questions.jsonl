@@ -1,0 +1,6 @@
+{"query": "Is AA184 delayed and what should I do?", "category": "flight_delay", "expected_terms": ["AA184", "55 minutes", "Sources:"]}
+{"query": "My EK232 flight was cancelled. What refund, voucher, compensation, and alternate flight options do I have?", "category": "cancellation_recovery", "expected_terms": ["Recovery plan", "refund", "Cheapest sample option", "$1039"]}
+{"query": "I am traveling from America to India and have an 8 hour layover in Dubai. What can I do?", "category": "long_layover", "expected_terms": ["Dubai layover", "Priority Pass", "sleep", "Sources:"]}
+{"query": "What happens if Amtrak train 391 is late?", "category": "train_delay", "expected_terms": ["391", "42 minutes", "Sources:"]}
+{"query": "Is ZZ999 delayed?", "category": "refusal", "expected_terms": ["could not find", "will not invent"]}
+{"query": "What are my options if my flight is cancelled?", "category": "policy_retrieval", "expected_terms": ["refund", "Sources:"]}
