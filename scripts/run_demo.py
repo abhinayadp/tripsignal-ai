@@ -9,6 +9,9 @@ from app.chatbot import TravelDisruptionAssistant
 def main() -> None:
     assistant = TravelDisruptionAssistant()
     demos = [
+        "Plan a 3 day trip to Dubai",
+        "Find cheap flights from Washington DC to Hyderabad",
+        "What should I check before my long-haul trip to India?",
         "Is AA184 delayed and what should I do?",
         "My EK232 flight was cancelled. What refund, voucher, compensation, and alternate flight options do I have?",
         "My UA920 flight is delayed. Will I miss my connection?",

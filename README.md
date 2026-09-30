@@ -1,15 +1,18 @@
 # TripSignal AI
 
-## Travel Disruption Intelligence Copilot
+## Travel Intelligence Copilot for Planning, Flying, and Recovery
 
-TripSignal AI is a professional RAG-based travel operations assistant for flights and trains. Instead of acting like a generic travel chatbot, it is designed as a disruption intelligence system: it checks live-style status records, retrieves carrier policies and passenger-rights guidance, explains why a trip is at risk, and recommends the next best action.
+TripSignal AI is a professional RAG-based travel intelligence assistant for flights and trains. It covers the full trip lifecycle: planning a destination, comparing fares, preparing for a long-haul journey, checking live-style flight or train status, planning a long layover, and recovering when a flight is delayed or cancelled.
 
 ### Professional framing
 
-Most travel chatbots answer trivia. TripSignal is built around a real operational problem: travelers and support teams need one reliable place to understand delays, missed connections, rebooking options, refund rules, and escalation paths across air and rail.
+Most travel chatbots either answer trivia or only help after something goes wrong. TripSignal is built around the full journey: inspiration, planning, booking tradeoffs, readiness, in-trip status, disruption recovery, and post-disruption benefit checks across air and rail.
 
 ### What the MVP does
 
+- Plans destination itineraries with pacing, food, area clustering, and travel-time buffers.
+- Compares sample flight deals by total value: price, route, layover, baggage, flexibility, and loyalty or card benefits.
+- Builds travel readiness checklists for long-haul trips, documents, baggage, health, devices, and arrival planning.
 - Answers flight status questions using structured flight records.
 - Handles cancellation recovery: refund path, rebooking choice, vouchers, hotel or meal support, compensation caution, and alternate flights with sample fares.
 - Answers train status questions using structured rail records.
@@ -21,6 +24,9 @@ Most travel chatbots answer trivia. TripSignal is built around a real operationa
 
 ### Example questions
 
+- Plan a 3 day trip to Dubai.
+- Find cheap flights from Washington DC to Hyderabad.
+- What should I check before my long-haul trip to India?
 - Is AA184 delayed?
 - My EK232 flight was cancelled. What refund, voucher, compensation, and alternate flight options do I have?
 - My UA920 flight is delayed. Will I miss my connection?

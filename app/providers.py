@@ -23,6 +23,7 @@ class SampleTravelDataProvider:
         self.flights = load_json(STATUS_DIR / "flights.json")
         self.trains = load_json(STATUS_DIR / "trains.json")
         self.alternates = load_json(STATUS_DIR / "alternate_flights.json")
+        self.deals = load_json(STATUS_DIR / "sample_deals.json")
 
     def get_flight(self, flight_number: str) -> dict | None:
         return self.flights.get(flight_number.upper())
@@ -32,6 +33,9 @@ class SampleTravelDataProvider:
 
     def get_alternate_flights(self, flight_number: str) -> list[dict]:
         return self.alternates.get(flight_number.upper(), {}).get("options", [])
+
+    def get_deals(self, route_key: str) -> dict | None:
+        return self.deals.get(route_key.upper())
 
 
 class LiveProviderNotConfigured(RuntimeError):

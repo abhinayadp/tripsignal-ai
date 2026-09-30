@@ -9,10 +9,12 @@
 <body>
   <main class="shell">
     <section class="hero">
-      <p class="eyebrow">RAG Travel Operations System</p>
+      <p class="eyebrow">RAG Travel Intelligence System</p>
       <h1>TripSignal AI</h1>
-      <p class="sub">A disruption intelligence copilot for flights and trains: status, cancellation recovery, alternate options, layover planning, and benefit checks.</p>
+      <p class="sub">A travel intelligence copilot for planning trips, comparing fares, preparing for long-haul journeys, checking flight and train status, planning layovers, and recovering from cancellations.</p>
       <div class="chips">
+        <button data-q="Plan a 3 day trip to Dubai">Plan Dubai trip</button>
+        <button data-q="Find cheap flights from Washington DC to Hyderabad">Find flight deals</button>
         <button data-q="Is AA184 delayed and what should I do?">Flight delay</button>
         <button data-q="My EK232 flight was cancelled. What refund, voucher, compensation, and alternate flight options do I have?">Cancellation recovery</button>
         <button data-q="I am traveling from America to India and have an 8 hour layover in Dubai. What can I do?">Dubai layover</button>
@@ -22,7 +24,7 @@
 
     <section class="panel">
       <div id="chat" class="chat">
-        <div class="msg bot">Ask me about a delayed flight, cancelled flight, train status, refund options, alternate flights, or a long layover.</div>
+        <div class="msg bot">Ask me to plan a trip, compare flights, prepare a checklist, check a flight or train, plan a layover, or recover from a cancellation.</div>
       </div>
       <form id="form" class="composer">
         <input id="input" placeholder="Try: My EK232 flight was cancelled. What should I do?" autocomplete="off" />

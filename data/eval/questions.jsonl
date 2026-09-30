@@ -4,3 +4,6 @@
 {"query": "What happens if Amtrak train 391 is late?", "category": "train_delay", "expected_terms": ["391", "42 minutes", "Sources:"]}
 {"query": "Is ZZ999 delayed?", "category": "refusal", "expected_terms": ["could not find", "will not invent"]}
 {"query": "What are my options if my flight is cancelled?", "category": "policy_retrieval", "expected_terms": ["refund", "Sources:"]}
+{"query": "Plan a 3 day trip to Dubai", "category": "trip_planning", "expected_terms": ["Dubai plan", "Old Dubai", "Burj Khalifa", "Sources:"]}
+{"query": "Find cheap flights from Washington DC to Hyderabad", "category": "flight_deals", "expected_terms": ["Cheapest sample", "$982", "sample fares", "Sources:"]}
+{"query": "What should I check before my long-haul trip to India?", "category": "travel_readiness", "expected_terms": ["readiness check", "passport", "Sources:"]}

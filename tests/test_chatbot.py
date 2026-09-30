@@ -63,3 +63,27 @@ def test_provider_contract_returns_sample_alternates():
     options = assistant.provider.get_alternate_flights("EK232")
     assert options
     assert min(option["price_usd"] for option in options) == 1039
+
+
+def test_trip_planning_answer_for_dubai():
+    assistant = TravelDisruptionAssistant()
+    answer = assistant.answer("Plan a 3 day trip to Dubai")
+    assert "Dubai plan" in answer
+    assert "Burj Khalifa" in answer
+    assert "Sources:" in answer
+
+
+def test_flight_deals_answer_uses_sample_deals():
+    assistant = TravelDisruptionAssistant()
+    answer = assistant.answer("Find cheap flights from Washington DC to Hyderabad")
+    assert "Cheapest sample" in answer
+    assert "$982" in answer
+    assert "sample fares" in answer.lower()
+
+
+def test_readiness_answer_includes_long_haul_checks():
+    assistant = TravelDisruptionAssistant()
+    answer = assistant.answer("What should I check before my long-haul trip to India?")
+    assert "readiness check" in answer.lower()
+    assert "passport" in answer.lower()
+    assert "Sources:" in answer

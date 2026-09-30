@@ -36,6 +36,7 @@ class TravelDisruptionAssistant:
         self.flights = self.provider.flights
         self.trains = self.provider.trains
         self.alternates = self.provider.alternates
+        self.deals = self.provider.deals
 
     def _flight_answer(self, flight_number: str, query: str) -> str | None:
         record = self.flights.get(flight_number)
@@ -124,6 +125,57 @@ class TravelDisruptionAssistant:
             f"Sources: {citations}."
         )
 
+    def _trip_plan_answer(self, query: str) -> str:
+        citations = self._citations(query + " destination itinerary plan places food pacing", top_k=3)
+        if "dubai" in query.lower():
+            return (
+                "Here is a balanced Dubai plan. Day 1: start in Old Dubai with Al Fahidi, Dubai Creek, an abra ride, and the souks, then keep the evening for Downtown and Burj Khalifa when the heat drops. "
+                "Day 2: use the middle of the day for an indoor anchor such as Dubai Mall or a museum, then choose Jumeirah or Kite Beach near sunset. "
+                "Day 3: pick one cluster only, Marina and JBR for a modern waterfront day or Palm Jumeirah for a slower premium day, and leave buffer for traffic. "
+                "Food strategy: try Emirati or Levantine food near Old Dubai, Indian or Pakistani food in Deira or Karama for value, and one nicer dinner near Downtown or Marina. "
+                f"TripSignal would next ask for your budget, hotel area, and whether you prefer heritage, shopping, beaches, or food so it can tighten the route. Sources: {citations}."
+            )
+        if "india" in query.lower() or "hyderabad" in query.lower():
+            return (
+                "For an India trip, I would pace it instead of overpacking it. Start with one arrival and jet-lag recovery block: daylight, hydration, a short walk, and an early local dinner. "
+                "Then build each day around one anchor experience, one food highlight, and one flexible buffer for traffic or rest. "
+                "If this is a first North India route, Delhi, Agra, and Jaipur work as the Golden Triangle. For South India, Hyderabad, Bengaluru, Chennai, Kerala, and Hampi need very different pacing, so the system should ask whether the priority is family, heritage, food, beaches, or business. "
+                f"Before finalizing, TripSignal checks domestic flight versus train time, hotel neighborhood, monument closed days, and safe arrival time. Sources: {citations}."
+            )
+        citations = self._citations(query + " travel itinerary destination planning", top_k=3)
+        return (
+            "I can build that as a paced itinerary: one anchor experience per day, one food highlight, travel-time buffers, and a light first day if you are crossing time zones. "
+            f"Tell me the destination, number of days, budget, and travel style, and I will turn it into a day-by-day plan. Sources: {citations}."
+        )
+
+    def _deals_answer(self, query: str) -> str:
+        citations = self._citations(query + " flight deals fare strategy cheapest price baggage flexible", top_k=3)
+        route_key = "IAD-HYD" if any(term in query.lower() for term in ["india", "hyderabad", "iad", "washington"]) else "DFW-ORD"
+        deal_set = self.provider.get_deals(route_key) or {}
+        options = deal_set.get("options", [])
+        lines = []
+        for option in options:
+            lines.append(
+                f"{option['carrier']} via {option['route']} departs {option['departure']} and arrives {option['arrival']}; sample fare ${option['price_usd']}; {option['notes']}."
+            )
+        cheapest = min(options, key=lambda item: item["price_usd"]) if options else None
+        cheapest_text = f" Cheapest sample: {cheapest['carrier']} at ${cheapest['price_usd']}." if cheapest else ""
+        return (
+            f"For {deal_set.get('route_label', route_key)}, I would compare total value, not just the lowest sticker price. "
+            + " ".join(lines)
+            + cheapest_text
+            + " Before choosing, check baggage, layover length, separate tickets, refund rules, loyalty earning, and whether a premium card adds trip protection or lounge value. "
+            + f"These are sample fares until a live provider such as Amadeus or Duffel is connected. Sources: {citations}."
+        )
+
+    def _readiness_answer(self, query: str) -> str:
+        citations = self._citations(query + " travel checklist passport visa baggage long haul readiness", top_k=3)
+        return (
+            "Here is the readiness check I would run before this trip: passport and transit visa status, onward boarding pass, baggage through-check, hotel address saved offline, eSIM or roaming plan, payment cards, medication in cabin baggage, chargers, downloaded entertainment, and a small delay kit in the carry-on. "
+            "For a long-haul trip, add hydration, sleep timing, daylight on arrival, and a light first evening instead of dense sightseeing. "
+            f"If you tell me your route and departure date, I can turn this into a timed checklist. Sources: {citations}."
+        )
+
     def _layover_answer(self, query: str) -> str:
         citations = self._citations(query + " Dubai layover lounge credit card benefits sleep shower offers", top_k=3)
         return (
@@ -148,6 +200,15 @@ class TravelDisruptionAssistant:
 
         if "dubai" in query_lower and any(term in query_lower for term in ["layover", "wait", "8 hour", "eight hour", "connection"]):
             return self._layover_answer(query)
+
+        if any(term in query_lower for term in ["cheap flight", "cheapest", "deal", "deals", "fare", "flight price", "offers"]):
+            return self._deals_answer(query)
+
+        if any(term in query_lower for term in ["checklist", "packing", "prepare", "before my trip", "before my long-haul", "what should i check", "what should i carry"]):
+            return self._readiness_answer(query)
+
+        if any(term in query_lower for term in ["itinerary", "plan", "trip to", "visit", "what to do in", "days in", "travel plan"]):
+            return self._trip_plan_answer(query)
 
         train_match = TRAIN_RE.search(query)
         asks_train = any(word in query.lower() for word in ["train", "amtrak", "rail", "station"])
